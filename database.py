@@ -5,7 +5,8 @@ from sqlalchemy.orm import sessionmaker
 
 username = os.environ.get('DB_USERNAME')
 host = os.environ.get('DB_HOST')
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}@{host}/pydress"
+password = os.environ.get('DB_PASSWORD')
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@{host}/pydress"
 
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

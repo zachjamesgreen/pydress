@@ -10,7 +10,8 @@ import main
 
 username = os.environ.get('DB_USERNAME')
 host = os.environ.get('DB_HOST')
-SQLALCHEMY_DATABASE_URL = f"postgresql://{username}@{host}/pydress_test"
+password = os.environ.get('DB_PASSWORD')
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}:{password}@{host}/pydress"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 database.Base.metadata.create_all(bind=engine)
