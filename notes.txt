@@ -1,0 +1,7 @@
+unique phone numbers
+use transactions
+
+unique emails catch on front end
+
+
+add in faker for tests
