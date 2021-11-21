@@ -43,4 +43,4 @@ def delete_person_email(id: int, email_id: int, db: Session = Depends(get_db)):
     e = crud.delete_email(db, email_id)
     if e is None:
         raise HTTPException(status_code=404, detail="Email not found")
-    return
+    return person.emails

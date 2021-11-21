@@ -103,3 +103,11 @@ def update_phone_number(db: Session, phone_number: schemas.PhoneNumberCreate, pe
     db.commit()
     db.refresh(db_phone_number)
     return db_phone_number
+
+def delete_phone_number(db: Session, phone_number_id: int):
+    db_phone_number = db.query(models.PhoneNumber).filter(models.PhoneNumber.id == phone_number_id).first()
+    if db_phone_number is None:
+        return None
+    db.delete(db_phone_number)
+    db.commit()
+    return db_phone_number

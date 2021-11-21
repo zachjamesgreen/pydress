@@ -156,11 +156,18 @@ def test_update_phone_number_for_person(clean_db):
     assert res.status_code == 200
     assert res.json()[0]["phone_number"] == "123-456-7893"
 
+def test_delete_person_phone_number(clean_db):
+    create_record()
+    res = client.delete("/persons/1/phone_number/500")
+    assert res.status_code == 404
 
+    res = client.delete("/persons/1/phone_number/1")
+    assert res.status_code == 200
+    db = TestingSessionLocal()
+    stmt = db.query(models.PhoneNumber).filter(models.PhoneNumber.phone_number == "123-456-7890").all()
+    db.close()
+    assert len(stmt) == 0
 
-
-# def test_update_person_phone_number(clean_db):
-# def test_delete_person_phone_number(clean_db):
 # def test_create_new_address_for_person(clean_db):
 # def test_update_person_address(clean_db):
 # def test_delete_person_address(clean_db):

@@ -34,3 +34,13 @@ def update_phone_number(id: int, phone_number: schemas.PhoneNumberUpdate, db: Se
         if isinstance(e.orig, UniqueViolation):
             raise HTTPException(status_code=400, detail='Phone Number already exists for person')
     return person.phone_numbers
+
+@router.delete("/persons/{id}/phone_number/{phone_number_id}")
+def delete_phone_number(id: int, phone_number_id: int, db: Session = Depends(get_db)):
+    person = crud.get_person(db, id)
+    if person is None:
+        raise HTTPException(status_code=404, detail="Person not found")
+    p = crud.delete_phone_number(db, phone_number_id)
+    if p is None:
+        raise HTTPException(status_code=404, detail="Phone Number not found")
+    return person.phone_numbers
