@@ -1,4 +1,5 @@
 import pytest
+import os
 from fastapi.testclient import TestClient
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
@@ -7,7 +8,9 @@ import models
 import database
 import main
 
-SQLALCHEMY_DATABASE_URL = "postgresql://zach@localhost/pydress_test"
+username = os.environ.get('DB_USERNAME')
+host = os.environ.get('DB_HOST')
+SQLALCHEMY_DATABASE_URL = f"postgresql://{username}@{host}/pydress_test"
 engine = create_engine(SQLALCHEMY_DATABASE_URL)
 TestingSessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 database.Base.metadata.create_all(bind=engine)

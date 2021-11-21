@@ -1,0 +1,39 @@
+version: 2.1
+jobs:
+  test:
+    working_directory:
+    docker:
+      - image: cimg/python:3.9.7
+      - image: postgres:13.3
+        environment:
+          POSTGRES_USER: circleci
+          POSTGRES_HOST_AUTH_METHOD: trust
+    steps:
+      - checkout
+      - run:
+          name: Install Postgres Client
+          command: |
+            sudo apt-get install -y wget 
+            mkdir -p /etc/apt/sources.list.d && sudo touch /etc/apt/sources.list.d/pgdg.list
+            sudo sh -c 'echo "deb http://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
+            wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | sudo apt-key add -
+            sudo apt-get update
+            sudo apt-get install -y postgresql-client
+      - run: pip install pytest sqlalchemy psycopg2
+      - run: pip install "fastapi[all]"
+      - run:
+          name: DB Setup
+          command: ./create_database.sh
+          environment:
+            DB_USERNAME: circleci
+            DB_HOST: localhost
+      - run:
+          name: Run tests
+          command: pytest -vv -s
+          environment:
+            DB_USERNAME: circleci
+            DB_HOST: localhost
+workflows:
+  basic:
+    jobs:
+      - test

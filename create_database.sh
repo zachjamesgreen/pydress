@@ -1,0 +1,8 @@
+set -e
+
+psql -U $DB_USERNAME -h $DB_HOST --set=ON_ERROR_STOP << EOF
+DROP DATABASE IF EXISTS pydress;
+DROP DATABASE IF EXISTS pydress_test;
+CREATE DATABASE pydress;
+CREATE DATABASE pydress_test;
+EOF
