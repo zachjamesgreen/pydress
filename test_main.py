@@ -80,7 +80,14 @@ def test_update_person(clean_db):
     assert res.status_code == 200
     assert res.json()["name"] == "zach green"
 
-# def test_delete_person():
+def test_delete_person(clean_db):
+    create_record()
+    res = client.delete("/persons/1")
+    assert res.status_code == 200
+    db = TestingSessionLocal()
+    stmt = db.query(models.Person).filter(models.Person.id == 1).all()
+    db.close()
+    assert len(stmt) == 0
 
 def test_create_new_email_for_person(clean_db):
     create_record()

@@ -30,3 +30,12 @@ def update_person(id: int, person: schemas.PersonCreate, db: Session = Depends(g
     db.commit()
     db.refresh(db_person)
     return db_person
+
+@router.delete("/persons/{id}")
+def delete_person(id: int, db: Session = Depends(get_db)):
+    db_person = crud.get_person(db, id)
+    if db_person is None:
+        raise HTTPException(status_code=404, detail="Person not found")
+    db.delete(db_person)
+    db.commit()
+    return db_person
