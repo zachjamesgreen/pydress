@@ -14,6 +14,11 @@ class AddressCreate(AddressBase):
 
 class AddressUpdate(AddressBase):
     id: int
+    street: Optional[str]
+    apt_number: Optional[str]
+    zip_code: Optional[str]
+    city: Optional[str]
+    state_abbr: Optional[str]
 
 class Address(AddressBase):
     id: int

@@ -168,7 +168,66 @@ def test_delete_person_phone_number(clean_db):
     db.close()
     assert len(stmt) == 0
 
-# def test_create_new_address_for_person(clean_db):
-# def test_update_person_address(clean_db):
-# def test_delete_person_address(clean_db):
+def test_create_new_address_for_person(clean_db):
+    create_record()
+    # no duplicate addresses
+    res = client.post(
+        "/persons/1/address",
+        json={"street": "123 Main st","city": "Anytown","state_abbr": "CA","zip_code": "90210","apt_number": ""}
+    )
+    assert res.status_code == 400
+    # no duplicate addresses case insensitive
+    res = client.post(
+        "/persons/1/address",
+        json={"street": "123 Main st","city": "Anytown","state_abbr": "CA","zip_code": "90210","apt_number": ""}
+    )
+    assert res.status_code == 400
+    # no null fields
+    res = client.post(
+        "/persons/1/address",
+        json={"street": "123 MAIN ST","city": "","state_abbr": "CA","zip_code": "90210","apt_number": ""}
+    )
+    assert res.status_code == 400
+    res = client.post(
+        "/persons/1/address",
+        json={"street": "123 New Street","city": "Anytown","state_abbr": "CA","zip_code": "90210","apt_number": ""}
+    )
+    assert res.status_code == 200
+    assert res.json()[-1]["street"] == "123 new street"
+    assert res.json()[-1]["city"] == "Anytown"
+    assert res.json()[-1]["state_abbr"] == "CA"
+    assert res.json()[-1]["zip_code"] == "90210"
+    assert res.json()[-1]["apt_number"] == ""
+
+def test_update_person_address(clean_db):
+    create_record()
+    res = client.post(
+        "/persons/1/address",
+        json={"street": "123 New Street","city": "Anytown","state_abbr": "CA","zip_code": "90210","apt_number": ""}
+    )
+
+    res = client.patch("/persons/1/address",json={"id": 1, "street": "123 New Street"})
+    assert res.status_code == 400
+    assert res.json()["detail"] == "Address already exists for person"
+
+
+    res = client.patch("/persons/1/address",json={"id": 1, "city": "NoTown",})
+    assert res.status_code == 200
+    assert res.json()[0]["street"] == "123 main st"
+    assert res.json()[0]["city"] == "NoTown"
+    assert res.json()[0]["state_abbr"] == "CA"
+    assert res.json()[0]["zip_code"] == "90210"
+    assert res.json()[0]["apt_number"] == ""
+
+
+def test_delete_person_address(clean_db):
+    create_record()
+    res = client.delete("/persons/1/address/500")
+    assert res.status_code == 404
+    res = client.delete("/persons/1/address/1")
+    assert res.status_code == 200
+    db = TestingSessionLocal()
+    stmt = db.query(models.Address).filter(models.Address.street == "123 main st").all()
+    db.close()
+    assert len(stmt) == 0
 

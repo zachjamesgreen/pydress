@@ -50,7 +50,7 @@ def create_email(db: Session, email: schemas.EmailCreate, person_id: int):
 def create_emails(db: Session, emails: List[schemas.EmailCreate], person_id: int):
     return [create_email(db, email, person_id) for email in emails]
 
-def update_email(db: Session, email: schemas.EmailCreate, person: models.Person):
+def update_email(db: Session, email: schemas.EmailUpdate, person: models.Person):
     db_email = db.query(models.Email).filter(models.Email.id == email.id).first()
     if db_email is None:
         return None
@@ -81,6 +81,26 @@ def create_address(db: Session, address: schemas.AddressCreate, person_id: int):
 def create_addresses(db: Session, addresses: List[schemas.AddressCreate], person_id: int):
     return [create_address(db, address, person_id) for address in addresses]
 
+def update_address(db: Session, address: schemas.AddressUpdate):
+    db_address = db.query(models.Address).filter(models.Address.id == address.id).first()
+    if db_address is None:
+        return None
+    for key, value in address.dict().items():
+        if value is not None:
+            setattr(db_address, key, value)
+    db.add(db_address)
+    db.commit()
+    db.refresh(db_address)
+    return db_address
+
+def delete_address(db: Session, address_id: int):
+    db_address = db.query(models.Address).filter(models.Address.id == address_id).first()
+    if db_address is None:
+        return None
+    db.delete(db_address)
+    db.commit()
+    return db_address
+
 #######################
 # PhoneNumber CRUD
 #######################
@@ -94,7 +114,7 @@ def create_phone_number(db: Session, phone_number: schemas.PhoneNumberCreate, pe
 def create_phone_numbers(db: Session, phone_numbers: List[schemas.PhoneNumberCreate], person_id: int):
     return [create_phone_number(db, phone_number, person_id) for phone_number in phone_numbers]
 
-def update_phone_number(db: Session, phone_number: schemas.PhoneNumberCreate, person: models.Person):
+def update_phone_number(db: Session, phone_number: schemas.PhoneNumberUpdate, person: models.Person):
     db_phone_number = db.query(models.PhoneNumber).filter(models.PhoneNumber.id == phone_number.id).first()
     if db_phone_number is None:
         return None
