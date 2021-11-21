@@ -73,12 +73,14 @@ def test_get_persons(clean_db):
 
 def test_update_person(clean_db):
     create_record()
-    res = client.post(
+    res = client.patch(
         "/persons/1",
         json={"name": "zach green"}
     )
     assert res.status_code == 200
     assert res.json()["name"] == "zach green"
+
+# def test_delete_person():
 
 def test_create_new_email_for_person(clean_db):
     create_record()
@@ -98,15 +100,16 @@ def test_create_new_email_for_person(clean_db):
     assert res.json()[1]["email"] == "b@example.com"
 
 def test_update_person_email(clean_db):
+    # seed
     create_record()
-    client.post(
-        "/persons/1/email",
-        json={"email": "b@example.com"}
-    )
-    res = client.post("/persons/1/email/1",json={"email": "b@example.com"})
+    client.post("/persons/1/email",json={"email": "b@example.com"})
+
+    # unique
+    res = client.patch("/persons/1/email",json={"id": 1, "email": "b@example.com"})
     assert res.status_code == 400
-    res = client.get("/persons/1")
-    res = client.post("/persons/1/email/1",json={"email": "aa@example.com"})
+
+    # update
+    res = client.patch("/persons/1/email",json={"id": 1, "email": "aa@example.com"})
     assert res.status_code == 200
     assert res.json()[-1]["email"] == "aa@example.com"
 
@@ -139,6 +142,12 @@ def test_create_new_phone_number_for_person(clean_db):
     res = client.post("/persons/1/phone_number",json={"phone_number": "123-456-7891"})
     assert res.status_code == 200
     assert res.json()[1]["phone_number"] == "123-456-7891"
+
+def test_update_phone_number_for_person(clean_db):
+    create_record()
+    res = client.patch("/persons/1/phone_number",json={"id": 1, "phone_number": "123-456-7893"})
+    assert res.status_code == 200
+    assert res.json()[0]["phone_number"] == "123-456-7893"
 
 
 

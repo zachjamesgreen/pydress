@@ -12,6 +12,9 @@ class AddressBase(BaseModel):
 class AddressCreate(AddressBase):
     pass
 
+class AddressUpdate(AddressBase):
+    id: int
+
 class Address(AddressBase):
     id: int
     person_id: int
@@ -27,6 +30,9 @@ class EmailBase(BaseModel):
 class EmailCreate(EmailBase):
     pass
 
+class EmailUpdate(EmailBase):
+    id: int
+
 class Email(EmailBase):
     id: int
     person_id: int
@@ -38,10 +44,10 @@ class Email(EmailBase):
 
 class PhoneNumberBase(BaseModel):
     phone_number: str
-
 class PhoneNumberCreate(PhoneNumberBase):
     pass
-
+class PhoneNumberUpdate(PhoneNumberBase):
+    id: int
 class PhoneNumber(PhoneNumberBase):
     id: int
     person_id: int

@@ -9,13 +9,13 @@ import crud, models, schemas
 
 router = APIRouter()
 
-@router.post("/persons/{id}/email/{email_id}")
-def update_person_email(id: int, email_id: int, email: schemas.EmailCreate ,db: Session = Depends(get_db)):
+@router.patch("/persons/{id}/email")
+def update_person_email(id: int, email: schemas.EmailUpdate ,db: Session = Depends(get_db)):
     person = crud.get_person(db, id)
     if person is None:
         raise HTTPException(status_code=404, detail="Person not found")
     try:
-        e = crud.update_email(db, email, email_id, person)
+        e = crud.update_email(db, email, person)
         if e is None:
             raise HTTPException(status_code=404, detail="Email not found")
     except exc.IntegrityError as e:
@@ -24,7 +24,7 @@ def update_person_email(id: int, email_id: int, email: schemas.EmailCreate ,db: 
     return person.emails
 
 @router.post("/persons/{id}/email")
-def update_person_email(id: int, email: schemas.EmailCreate ,db: Session = Depends(get_db)):
+def create_person_email(id: int, email: schemas.EmailCreate ,db: Session = Depends(get_db)):
     person = crud.get_person(db, id)
     if person is None:
         raise HTTPException(status_code=404, detail="Person not found")

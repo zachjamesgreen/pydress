@@ -50,8 +50,8 @@ def create_email(db: Session, email: schemas.EmailCreate, person_id: int):
 def create_emails(db: Session, emails: List[schemas.EmailCreate], person_id: int):
     return [create_email(db, email, person_id) for email in emails]
 
-def update_email(db: Session, email: schemas.EmailCreate, email_id: int, person: models.Person):
-    db_email = db.query(models.Email).filter(models.Email.id == email_id).first()
+def update_email(db: Session, email: schemas.EmailCreate, person: models.Person):
+    db_email = db.query(models.Email).filter(models.Email.id == email.id).first()
     if db_email is None:
         return None
     db_email.email = email.email
@@ -93,3 +93,13 @@ def create_phone_number(db: Session, phone_number: schemas.PhoneNumberCreate, pe
 
 def create_phone_numbers(db: Session, phone_numbers: List[schemas.PhoneNumberCreate], person_id: int):
     return [create_phone_number(db, phone_number, person_id) for phone_number in phone_numbers]
+
+def update_phone_number(db: Session, phone_number: schemas.PhoneNumberCreate, person: models.Person):
+    db_phone_number = db.query(models.PhoneNumber).filter(models.PhoneNumber.id == phone_number.id).first()
+    if db_phone_number is None:
+        return None
+    db_phone_number.phone_number = phone_number.phone_number
+    db.add(db_phone_number)
+    db.commit()
+    db.refresh(db_phone_number)
+    return db_phone_number

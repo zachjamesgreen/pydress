@@ -20,7 +20,7 @@ def read_person(person_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Person not found")
     return person
 
-@router.post("/persons/{id}")
+@router.patch("/persons/{id}")
 def update_person(id: int, person: schemas.PersonCreate, db: Session = Depends(get_db)):
     db_person = crud.get_person(db, id)
     if db_person is None:
