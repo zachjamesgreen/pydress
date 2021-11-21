@@ -112,8 +112,10 @@ def test_update_person_email(clean_db):
 
 def test_delete_person_email(clean_db):
     create_record()
+    # returns 404 if email doesn't exist
     res = client.delete("/persons/1/email/500")
     assert res.status_code == 404
+
     res = client.delete("/persons/1/email/1")
     assert res.status_code == 200
     db = TestingSessionLocal()
@@ -121,8 +123,26 @@ def test_delete_person_email(clean_db):
     db.close()
     assert len(stmt) == 0
 
+def test_create_new_phone_number_for_person(clean_db):
+    create_record()
+    # need to implement parsing ints from phone number
+    # so that 123-456-7890 becomes 1234567890 and are the same
+    # res = client.post(
+    #     "/persons/1/phone_number",
+    #     json={"phone_number": "123-456-7890"}
+    # )
+    # assert res.status_code == 400
 
-# def test_create_new_phone_number_for_person(clean_db):
+    res = client.post("/persons/1/phone_number",json={"phone_number": "123-456-7890"})
+    assert res.status_code == 400
+
+    res = client.post("/persons/1/phone_number",json={"phone_number": "123-456-7891"})
+    assert res.status_code == 200
+    assert res.json()[1]["phone_number"] == "123-456-7891"
+
+
+
+
 # def test_update_person_phone_number(clean_db):
 # def test_delete_person_phone_number(clean_db):
 # def test_create_new_address_for_person(clean_db):
