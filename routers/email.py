@@ -44,27 +44,3 @@ def delete_person_email(id: int, email_id: int, db: Session = Depends(get_db)):
     if e is None:
         raise HTTPException(status_code=404, detail="Email not found")
     return
-
-@router.post("/persons/{id}/phone_number")
-def update_person_phone_number(id: int, phone_number: schemas.PhoneNumberCreate ,db: Session = Depends(get_db)):
-    person = crud.get_person(db, id)
-    if person is None:
-        raise HTTPException(status_code=404, detail="Person not found")
-    try:
-        crud.create_phone_number(db, phone_number, id)
-    except exc.IntegrityError as e:
-        if isinstance(e.orig, UniqueViolation):
-            raise HTTPException(status_code=400, detail='Phone number already exists')
-    return person.phone_numbers
-
-@router.post("/persons/{id}/address")
-def update_person_address(id: int, address: schemas.AddressCreate ,db: Session = Depends(get_db)):
-    person = crud.get_person(db, id)
-    if person is None:
-        raise HTTPException(status_code=404, detail="Person not found")
-    try:
-        crud.create_address(db, address, id)
-    except exc.IntegrityError as e:
-        if isinstance(e.orig, UniqueViolation):
-            raise HTTPException(status_code=400, detail='Address already exists')
-    return person.addresses
