@@ -15,5 +15,7 @@ I did integrate USPS web API to verify addresses. A user would need to verify th
 My first project using Python/FastAPI and Vue.js
 
 site: https://pydress.zachgreen.codes
+
 backend: https://github.com/zachjamesgreen/pydress
+
 frontend: https://github.com/zachjamesgreen/pydress_front
